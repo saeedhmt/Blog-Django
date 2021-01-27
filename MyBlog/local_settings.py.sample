@@ -1,0 +1,13 @@
+SECRET_KEY = 'YOUR SECRET KEY'
+
+DATABASES = {
+    'default': {
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'DATABASE NAME',
+        'HOST': 'localhost',
+        'USER': 'DATABASE USER',
+        'PASSWORD': 'DATABASE PASSWORD'
+    }
+}
