@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User, AbstractUser
+from django.core.exceptions import FieldError
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
@@ -73,7 +74,7 @@ class Like(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.post and not self.comment:
-            raise Exception('like must have refrence to a post or comment!')
+            raise FieldError('like must have refrence to a post or comment!')
         super(self, Like).save(*args, **kwargs)
 
     def __str__(self):
@@ -85,12 +86,12 @@ class Like(models.Model):
 
 class Dislike(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         if not self.post and not self.comment:
-            raise Exception('Dislike must have refrence to a post or comment!')
+            raise FieldError('Dislike must have refrence to a post or comment!')
         super(self, Dislike).save(*args, **kwargs)
 
     def __str__(self):
