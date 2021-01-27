@@ -1,2 +1,2 @@
 # Blog-Django
-A blog written with django.
+A blog that users can post and like posts coded with django.
