@@ -1,37 +1,42 @@
 from django.contrib.auth.models import User, AbstractUser
-from django.core.exceptions import FieldError
+from django.core.exceptions import FieldError, ValidationError
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
 # Create your models here.
-from django.utils.translation import ugettext_lazy as _
+# from django.utils.translation import ugettext_lazy as _
 from .validators import check_phone
 
 
 class CustomUser(AbstractUser):
     # user = models.OneToOneField(User, on_delete=models.CASCADE)
-    email = models.EmailField(_('email address'), null=False, blank=False, unique=True)
+    email = models.EmailField('آدرس ایمیل', null=False, blank=False, unique=True)
     image = models.ImageField(upload_to=f'userImages/%Y/%m/%d/', null=True, blank=True)
     phone = models.CharField('شماره موبایل', max_length=11, validators=[check_phone], unique=True)
+    datetime = models.DateTimeField('زمان و تاریخ ثبت نام کاربر', null=True, blank=True)
 
     def __str__(self):
         return self.username
 
+    def save(self, *args, **kwargs):
+        self.datetime = timezone.now()
+        super().save(*args, **kwargs)
+
 class Tag(models.Model):
-    tag_name = models.CharField('برچسب', max_length=20)
+    name = models.CharField('برچسب', max_length=20)
 
     def __str__(self):
-        return self.tag_name
+        return self.name
 
     class Meta:
         verbose_name = 'تگ'
         verbose_name_plural = 'تگ ها'
 
 class Category(models.Model):
-    category_name = models.CharField('دسته بندی', max_length=20)
+    name = models.CharField('دسته بندی', max_length=20)
 
     def __str__(self):
-        return self.category_name
+        return self.name
 
     class Meta:
         verbose_name = 'دسته بندی'
@@ -39,16 +44,21 @@ class Category(models.Model):
 
 
 class Post(models.Model):
-    post_title = models.CharField('عنوان', max_length=50)
-    post_text = models.TextField('متن')
-    post_image = models.ImageField(upload_to=f'postImages/%Y/%m/%d/', null=True, blank=True)
+    title = models.CharField('عنوان', max_length=50)
+    text = models.TextField('متن')
+    image = models.ImageField(upload_to=f'postImages/%Y/%m/%d/', null=True, blank=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    post_show = models.BooleanField('نمایش', default=False)
+    show = models.BooleanField('نمایش', default=False)
     tag = models.ManyToManyField(Tag, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    datetime = models.DateTimeField('زمان و تاریخ پست', null=True, blank=True)
 
     def __str__(self):
-        return f'{self.post_title} by {self.author.username}'
+        return f'{self.title} by {self.author.username}'
+
+    def save(self, *args, **kwargs):
+        self.datetime = timezone.now()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'پست'
@@ -56,47 +66,62 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    comment_text = models.CharField('کامنت', max_length=300)
+    text = models.CharField('کامنت', max_length=300)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    datetime = models.DateTimeField('زمان و تاریخ کامنت', null=True, blank=True)
 
     def __str__(self):
         return f'Comment written by {self.author.username}'
+
+    def save(self, *args, **kwargs):
+        self.datetime = timezone.now()
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'نظر'
         verbose_name_plural = 'نظرات'
 
 class Like(models.Model):
+    is_like = models.BooleanField('لایک', default=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    datetime = models.DateTimeField('زمان و تاریخ لایک', null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.post and not self.comment:
-            raise FieldError('like must have refrence to a post or comment!')
-        super(self, Like).save(*args, **kwargs)
+            raise FieldError('like or dislike must have refrence to a post or comment!')
+        elif self.post and self.comment:
+            raise ValidationError('like or dislike must have refrence to a post or comment!')
+
+        self.datetime = timezone.now()
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.post.post_title}{self.comment.comment_text} Liked by {self.user.username}'
+        if self.is_like:
+            return f'{self.post.title}{self.comment.text} Liked by {self.user.username}'
+        else:
+            return f'{self.comment.text}{self.post.title} Disliked by {self.user.username}'
+
 
     class Meta:
-        verbose_name = 'لایک'
-        verbose_name_plural = 'لایک ها'
+        verbose_name = 'لایک و دیسلایک'
+        verbose_name_plural = 'لایک ها و دیسلایک ها'
 
-class Dislike(models.Model):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-
-    def save(self, *args, **kwargs):
-        if not self.post and not self.comment:
-            raise FieldError('Dislike must have refrence to a post or comment!')
-        super(self, Dislike).save(*args, **kwargs)
-
-    def __str__(self):
-        return f'{self.comment.comment_text}{self.post.post_title} Disliked by {self.user.username}'
-
-    class Meta:
-        verbose_name = 'دیسلایک'
-        verbose_name_plural = 'دیسلایک ها'
+# class Dislike(models.Model):
+#     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
+#     comment = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True, blank=True)
+#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+#
+#     def save(self, *args, **kwargs):
+#         if not self.post and not self.comment:
+#             raise FieldError('Dislike must have refrence to a post or comment!')
+#         super().save(*args, **kwargs)
+#
+#     def __str__(self):
+#         return f'{self.comment.comment_text}{self.post.post_title} Disliked by {self.user.username}'
+#
+#     class Meta:
+#         verbose_name = 'دیسلایک'
+#         verbose_name_plural = 'دیسلایک ها'
