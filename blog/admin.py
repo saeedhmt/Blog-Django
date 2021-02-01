@@ -1,4 +1,5 @@
 from django.contrib import admin, messages
+from django.utils.html import format_html
 from django.utils.translation import ngettext
 
 from .models import *
@@ -35,10 +36,15 @@ class CustomUserAdmin(admin.ModelAdmin):
     # fieldsets = [
     #     ('Info', {'fields' : ['image', 'first_name', 'last_name']})
     # ]
-    fields = ('image', 'username', 'first_name', 'last_name', 'email', 'phone')
+    fields = ('image_tag', 'image', 'username', 'first_name', 'last_name', 'email', 'phone')
     inlines = (PostInline, CommentInline, LikeInline)
     list_display = ('username', 'first_name', 'last_name', 'email')
     search_fields = ('first_name', 'last_name', 'username')
+    readonly_fields = ('image_tag',)
+
+    # def image_tag(self, obj):
+    #     return format_html('<img src="{}" />'.format(obj.image))
+
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):

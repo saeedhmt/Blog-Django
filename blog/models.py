@@ -5,6 +5,9 @@ from django.utils import timezone
 from django.conf import settings
 # Create your models here.
 # from django.utils.translation import ugettext_lazy as _
+# from django.utils.safestring import mark_safe
+from django.utils.html import mark_safe, format_html
+
 from .validators import check_phone
 
 
@@ -21,6 +24,11 @@ class CustomUser(AbstractUser):
     def save(self, *args, **kwargs):
         self.datetime = timezone.now()
         super().save(*args, **kwargs)
+
+    def image_tag(self):
+        if self.image:
+            return format_html('<img src="/media/%s" width="150" height="150" />' % (self.image))
+
 
 
 class Tag(models.Model):
@@ -64,6 +72,7 @@ class Post(models.Model):
     tag = models.ManyToManyField(Tag, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     datetime = models.DateTimeField('زمان و تاریخ پست', null=True, blank=True)
+    # active = models.BooleanField('فعال', default=False)
 
     def get_tags(self):
         return ", ".join([tag.name for tag in self.tag.all()])
@@ -87,6 +96,7 @@ class Comment(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     datetime = models.DateTimeField('زمان و تاریخ کامنت', null=True, blank=True)
+    # show = models.BooleanField('نمایش', default=False)
 
     def __str__(self):
         return f'Comment written by {self.author.username}'
