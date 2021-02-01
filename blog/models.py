@@ -66,7 +66,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    text = models.CharField('کامنت', max_length=300)
+    text = models.TextField('کامنت', max_length=300)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     datetime = models.DateTimeField('زمان و تاریخ کامنت', null=True, blank=True)
