@@ -22,6 +22,7 @@ class CustomUser(AbstractUser):
         self.datetime = timezone.now()
         super().save(*args, **kwargs)
 
+
 class Tag(models.Model):
     name = models.CharField('برچسب', max_length=20)
 
@@ -32,8 +33,19 @@ class Tag(models.Model):
         verbose_name = 'تگ'
         verbose_name_plural = 'تگ ها'
 
+    def get_count_posts(self):
+        return self.post_set.count()
+
+    get_count_posts.short_description = 'تعداد پست ها'
+
+
 class Category(models.Model):
     name = models.CharField('دسته بندی', max_length=20)
+
+    def get_count_posts(self):
+        return self.post_set.count()
+
+    get_count_posts.short_description = 'تعداد پست ها'
 
     def __str__(self):
         return self.name
@@ -52,6 +64,11 @@ class Post(models.Model):
     tag = models.ManyToManyField(Tag, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     datetime = models.DateTimeField('زمان و تاریخ پست', null=True, blank=True)
+
+    def get_tags(self):
+        return ", ".join([tag.name for tag in self.tag.all()])
+
+    get_tags.short_description = 'تگ ها'
 
     def __str__(self):
         return f'{self.title} by {self.author.username}'
@@ -100,9 +117,15 @@ class Like(models.Model):
 
     def __str__(self):
         if self.is_like:
-            return f'{self.post.title}{self.comment.text} Liked by {self.user.username}'
+            if self.post:
+                return f'{self.post.title} Liked by {self.user.username}'
+            else:
+                return f'{self.comment.text} Liked by {self.user.username}'
         else:
-            return f'{self.comment.text}{self.post.title} Disliked by {self.user.username}'
+            if self.post:
+                return f'{self.post.title} Disliked by {self.user.username}'
+            else:
+                return f'{self.comment.text} Disliked by {self.user.username}'
 
 
     class Meta:

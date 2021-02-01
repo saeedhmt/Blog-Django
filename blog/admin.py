@@ -1,4 +1,6 @@
-from django.contrib import admin
+from django.contrib import admin, messages
+from django.utils.translation import ngettext
+
 from .models import *
 # Register your models here.
 
@@ -10,11 +12,14 @@ from .models import *
 # admin.site.register(Category)
 # admin.site.register(Tag)
 
+
 class PostInline(admin.StackedInline):
     model = Post
 
+
 class CommentInline(admin.StackedInline):
     model = Comment
+
 
 class LikeInline(admin.StackedInline):
     model = Like
@@ -32,32 +37,62 @@ class CustomUserAdmin(admin.ModelAdmin):
     # ]
     fields = ('image', 'username', 'first_name', 'last_name', 'email', 'phone')
     inlines = (PostInline, CommentInline, LikeInline)
+    list_display = ('username', 'first_name', 'last_name', 'email')
+    search_fields = ('first_name', 'last_name', 'username')
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Post', {'fields' : ('datetime', 'category','author', 'title', 'text', 'image', 'tag', 'show')}),
+        ('Post', {'fields' : ('datetime', 'category','author', 'title', 'text', 'image', 'tag', 'show'),
+                  }),
     ]
     # fields = ('category','author', 'title', 'text', 'image', 'tag', 'datetime', 'show')
 
     inlines = (CommentInline, LikeInline, TagPostInline)
+    list_display = ('title', 'author', 'category', 'get_tags', 'datetime', 'show')
+    list_filter = ('author', 'category', 'show', 'tag', 'datetime')
+    search_fields = ('author', 'tag', 'category', 'title')
+
+    def show_posts(self, request, queryset):
+        updated = queryset.update(show=True)
+        self.message_user(request, f'{updated} پست نمایش داده می شود.', messages.SUCCESS)
+
+    show_posts.short_description = 'نمایش پست ها'
+
+    def dont_show_posts(self, request, queryset):
+        updated = queryset.update(show=False)
+        self.message_user(request, f'{updated} پست نمایش داده نمی شود.', messages.ERROR)
+
+    dont_show_posts.short_description = 'عدم نمایش پست ها'
+    actions = (show_posts, dont_show_posts)
+
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     fields = ('author', 'text', 'datetime', 'post')
 
     inlines = (LikeInline,)
+    list_display = ('author', 'post', 'datetime')
+    list_filter = ('author', 'datetime', 'post')
+    search_fields = ('author', 'post')
 
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
     fields = ('user', 'post', 'comment', 'datetime', 'is_like')
+    list_display = ('user', 'post', 'comment', 'datetime', 'is_like')
+    list_filter = ('user', 'post', 'comment', 'datetime', 'is_like')
+    search_fields = ('user', 'comment', 'post')
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     fields = ('name',)
-    # filter_horizontal = (Post,)
     inlines = (TagPostInline,)
+    list_display = ('name', 'get_count_posts')
+    search_fields = ('name',)
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    fields = ('name',)
     inlines = (PostInline,)
+    list_display = ('name', 'get_count_posts')
+    search_fields = ('name',)
