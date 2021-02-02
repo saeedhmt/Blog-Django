@@ -72,7 +72,7 @@ class Post(models.Model):
     tag = models.ManyToManyField(Tag, null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     datetime = models.DateTimeField('زمان و تاریخ پست', null=True, blank=True)
-    # active = models.BooleanField('فعال', default=False)
+    active = models.BooleanField('فعال', default=True)
 
     def get_tags(self):
         return ", ".join([tag.name for tag in self.tag.all()])

@@ -50,16 +50,16 @@ class CustomUserAdmin(admin.ModelAdmin):
 class PostAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Post', {'fields' : ('datetime', 'category','author', 'title',
-                              'text', 'image', 'tag', 'show'),
+                              'text', 'image', 'tag', 'show', 'active'),
                   }),
     ]
     # fields = ('category','author', 'title', 'text', 'image', 'tag', 'datetime', 'show')
 
     inlines = (CommentInline, LikeInline, TagPostInline)
     list_display = ('title', 'author', 'category', 'get_tags',
-                    'datetime', 'show', 'get_count_likes',
+                    'datetime', 'show', 'active', 'get_count_likes',
                     'get_count_dislikes')
-    list_filter = ('author', 'category', 'show', 'tag', 'datetime')
+    list_filter = ('author', 'category', 'show','active', 'tag', 'datetime')
     search_fields = ('author', 'tag', 'category', 'title')
 
     def show_posts(self, request, queryset):
@@ -73,7 +73,20 @@ class PostAdmin(admin.ModelAdmin):
         self.message_user(request, f'{updated} پست نمایش داده نمی شود.', messages.ERROR)
 
     dont_show_posts.short_description = 'عدم نمایش پست ها'
-    actions = (show_posts, dont_show_posts)
+
+    def active_posts(self, request, queryset):
+        updated = queryset.update(active=True)
+        self.message_user(request, f'{updated} پست فعال شد.', messages.SUCCESS)
+
+    active_posts.short_description = 'فعال کردن پست ها'
+
+    def deactive_posts(self, request, queryset):
+        updated = queryset.update(active=False)
+        self.message_user(request, f'{updated} پست غیرفعال شدند.', messages.ERROR)
+
+    deactive_posts.short_description = 'غیرفعال کردن پست ها'
+
+    actions = (show_posts, dont_show_posts, active_posts, deactive_posts)
 
 
 @admin.register(Comment)
