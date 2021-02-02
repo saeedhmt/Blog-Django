@@ -6,14 +6,16 @@
 
 {% block content %}
     {% for post in latest_posts %}
-        <table class="table table-light table-hover my-5">
+            <table class="table table-white table-hover text-center">
             <tbody>
                 <tr>
                     <td>
                         {{ post.image }}
                     </td>
                     <td>
+                        <a class="nav-link" href="{% url 'blog:post_detail' post.id %}">
                         {{ post.title }}
+                        </a>
                     </td>
                     <td>
                         دسته بندی : {{ post.category }}

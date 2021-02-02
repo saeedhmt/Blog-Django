@@ -1,0 +1,28 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    {{ post.title }}
+{% endblock %}
+
+{% block content %}
+    <div class="row my-5">
+    <h7>
+        دسته بندی: {{ post.category }}
+    </h7><br><br>
+    <h2>
+        {{ post.title }}
+    </h2><br><br>
+    <h7>
+        نوشته شده توسط {{ post.author }} در تاریخ {{ post.datetime }}
+    </h7><br><br><br>
+    <p>
+        {{ post.text }}
+    </p><br><br><br>
+    <h7>
+        برپسب ها : {{ post.get_tags }}
+    </h7>
+    {% if post.image %}
+        <img src="{{ post.image }}">
+    {% endif %}
+    </div>
+{% endblock %}

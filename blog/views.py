@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import permission_required, login_required
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
 from django.urls import reverse
@@ -40,3 +40,13 @@ def new_post(request):
         form_post = PostModelForm()
 
     return render(request, 'blog/newpost.html', {'form_post' : form_post})
+
+
+# def post_detail(request, post_id):
+#     post = get_object_or_404(Post, pk=post_id)
+#     context = {'post' : post}
+#     return render(request, 'blog/post_detail.html', context=context)
+
+class PostDetailView(generic.DetailView):
+    model = Post
+    template_name = 'blog/post_detail.html'
