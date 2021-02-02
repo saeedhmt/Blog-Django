@@ -1,0 +1,38 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}
+    صفحه اصلی
+{% endblock %}
+
+{% block content %}
+    {% for post in latest_posts %}
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        {{ post.image }}
+                    </td>
+                    <td>
+                        {{ post.title }}<br>
+                        دسته بندی : {{ post.category }}
+                    </td>
+                    <td>
+                        نوشته شده توسط : {{ post.author }}
+                    </td>
+                    <td>
+                        تاریخ انتشار : {{ post.datetime }}
+                    </td>
+                    <td>
+                        تعداد لایک : {{ post.get_count_likes }}
+                    </td>
+                    <td>
+                        تعداد دیسلایک : {{ post.get_count_dislikes }}
+                    </td>
+                    <td>
+                        برچسب : {{ post.get_tags }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+{% endblock %}
