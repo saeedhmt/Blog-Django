@@ -6,12 +6,12 @@
 
 {% block content %}
     {% for post in latest_posts %}
-            <table class="table table-white table-hover text-center">
+            <table class="table table-white table-hover text-center my-5">
             <tbody>
                 <tr>
-                    <td>
-                        {{ post.image }}
-                    </td>
+{#                    <td>#}
+{#                        <img src="/media/{{ post.image }}" style="width: 100px; height: 100px">#}
+{#                    </td>#}
                     <td>
                         <a class="nav-link" href="{% url 'blog:post_detail' post.id %}">
                         {{ post.title }}

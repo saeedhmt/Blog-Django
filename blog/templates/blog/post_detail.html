@@ -6,23 +6,23 @@
 
 {% block content %}
     <div class="row my-5">
-    <h7>
+    <h7 class="'my-4">
         دسته بندی: {{ post.category }}
-    </h7><br><br>
-    <h2>
+    </h7>
+    <h2 class="my-2">
         {{ post.title }}
-    </h2><br><br>
-    <h7>
+    </h2>
+    <h7 class="my-2">
         نوشته شده توسط {{ post.author }} در تاریخ {{ post.datetime }}
-    </h7><br><br><br>
+    </h7>
+    {% if post.image %}
+        <img class="mx-auto my-3" src="/media/{{ post.image }}" style="width: 1000px; height: 500px">
+    {% endif %}
     <p>
         {{ post.text }}
     </p><br><br><br>
     <h7>
         برپسب ها : {{ post.get_tags }}
     </h7>
-    {% if post.image %}
-        <img src="{{ post.image }}">
-    {% endif %}
     </div>
 {% endblock %}
