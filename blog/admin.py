@@ -22,7 +22,7 @@ class CommentInline(admin.StackedInline):
     model = Comment
 
 
-class LikeInline(admin.StackedInline):
+class LikeInline(admin.TabularInline):
     model = Like
 
 
@@ -49,13 +49,16 @@ class CustomUserAdmin(admin.ModelAdmin):
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Post', {'fields' : ('datetime', 'category','author', 'title', 'text', 'image', 'tag', 'show'),
+        ('Post', {'fields' : ('datetime', 'category','author', 'title',
+                              'text', 'image', 'tag', 'show'),
                   }),
     ]
     # fields = ('category','author', 'title', 'text', 'image', 'tag', 'datetime', 'show')
 
     inlines = (CommentInline, LikeInline, TagPostInline)
-    list_display = ('title', 'author', 'category', 'get_tags', 'datetime', 'show')
+    list_display = ('title', 'author', 'category', 'get_tags',
+                    'datetime', 'show', 'get_count_likes',
+                    'get_count_dislikes')
     list_filter = ('author', 'category', 'show', 'tag', 'datetime')
     search_fields = ('author', 'tag', 'category', 'title')
 
@@ -75,12 +78,27 @@ class PostAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    fields = ('author', 'text', 'datetime', 'post')
+    fields = ('author', 'text', 'datetime', 'post', 'show')
 
     inlines = (LikeInline,)
-    list_display = ('author', 'post', 'datetime')
-    list_filter = ('author', 'datetime', 'post')
+    list_display = ('author', 'post', 'datetime', 'show',
+                    'get_count_likes', 'get_count_dislikes')
+    list_filter = ('author', 'datetime', 'post', 'show')
     search_fields = ('author', 'post')
+
+    def show_comments(self, request, queryset):
+        updated = queryset.update(show=True)
+        self.message_user(request, f'{updated} نظر نمایش داده می شود.', messages.SUCCESS)
+
+    show_comments.short_description = 'نمایش نظر ها'
+
+    def dont_show_comments(self, request, queryset):
+        updated = queryset.update(show=False)
+        self.message_user(request, f'{updated} نظر نمایش داده نمی شود.', messages.ERROR)
+
+    dont_show_comments.short_description = 'عدم نمایش نظر ها'
+    actions = (show_comments, dont_show_comments)
+
 
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):

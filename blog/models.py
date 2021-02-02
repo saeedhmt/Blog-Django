@@ -77,6 +77,16 @@ class Post(models.Model):
     def get_tags(self):
         return ", ".join([tag.name for tag in self.tag.all()])
 
+    def get_count_likes(self):
+        return self.like_set.filter(is_like=True).count()
+
+    get_count_likes.short_description = 'تعداد لایک ها'
+
+    def get_count_dislikes(self):
+        return self.like_set.filter(is_like=False).count()
+
+    get_count_dislikes.short_description = 'تعداد دیسلایک ها'
+
     get_tags.short_description = 'تگ ها'
 
     def __str__(self):
@@ -96,7 +106,7 @@ class Comment(models.Model):
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     datetime = models.DateTimeField('زمان و تاریخ کامنت', null=True, blank=True)
-    # show = models.BooleanField('نمایش', default=False)
+    show = models.BooleanField('نمایش', default=False)
 
     def __str__(self):
         return f'Comment written by {self.author.username}'
@@ -108,6 +118,16 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'نظر'
         verbose_name_plural = 'نظرات'
+
+    def get_count_likes(self):
+        return self.like_set.filter(is_like=True).count()
+
+    get_count_likes.short_description = 'تعداد لایک ها'
+
+    def get_count_dislikes(self):
+        return self.like_set.filter(is_like=False).count()
+
+    get_count_dislikes.short_description = 'تعداد دیسلایک ها'
 
 class Like(models.Model):
     is_like = models.BooleanField('لایک', default=True)
@@ -141,6 +161,15 @@ class Like(models.Model):
     class Meta:
         verbose_name = 'لایک و دیسلایک'
         verbose_name_plural = 'لایک ها و دیسلایک ها'
+
+
+    def check_like(self):
+        if self.comment:
+            if self.user.filter(user=self.user).filter(comment=self.comment).count() > 1:
+                raise ValidationError('کامنت قبلا لایک یا دیسلایک شده است.')
+        elif self.post:
+            if self.user.filter(user=self.user).filter(post=self.post).count() > 1:
+                raise ValidationError('پست قبلا لایک یا دیسلایک شده است.')
 
 # class Dislike(models.Model):
 #     post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
