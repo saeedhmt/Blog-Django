@@ -6,14 +6,16 @@
 
 {% block content %}
     {% for post in latest_posts %}
-        <table>
+        <table class="table table-light table-hover my-5">
             <tbody>
                 <tr>
                     <td>
                         {{ post.image }}
                     </td>
                     <td>
-                        {{ post.title }}<br>
+                        {{ post.title }}
+                    </td>
+                    <td>
                         دسته بندی : {{ post.category }}
                     </td>
                     <td>
