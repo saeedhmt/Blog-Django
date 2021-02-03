@@ -1,4 +1,4 @@
-{% extends 'blog/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}
     پست جدید
@@ -10,8 +10,8 @@
     {% csrf_token %}
         <table>
         {{ form_post.as_table }}
-        <input type="submit" value="submit">
         </table>
+        <input type="submit" value="ارسال">
     </form>
 </div>
 {% endblock %}

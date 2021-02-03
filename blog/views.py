@@ -22,7 +22,7 @@ class IndexListView(generic.ListView):
     def get_queryset(self):
         return Post.objects.filter(active=True).filter(show=True).order_by('-datetime')[:5]
 
-@login_required
+# @login_required
 @permission_required('blog.add_post')
 def new_post(request):
     if request.method == 'POST':
