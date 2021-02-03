@@ -99,6 +99,10 @@ class Post(models.Model):
     class Meta:
         verbose_name = 'پست'
         verbose_name_plural = 'پست ها'
+        permissions = [
+            ('change_post_show', 'تایید پست برای نمایش'),
+            ('change_post_active', 'فعال بودن پست'),
+        ]
 
 
 class Comment(models.Model):
@@ -118,6 +122,9 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'نظر'
         verbose_name_plural = 'نظرات'
+        permissions = [
+            ('change_comment_show', 'تایید کامنت برای نمایش'),
+        ]
 
     def get_count_likes(self):
         return self.like_set.filter(is_like=True).count()
