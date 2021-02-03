@@ -25,4 +25,17 @@
         برپسب ها : {{ post.get_tags }}
     </h7>
     </div>
+    <div class="row my-5">
+    <h4 class="my-5">
+        نظرات کاربران
+    </h4>
+    {% for comment in comments %}
+    <h7 class="my-2">
+        نوشته شده توسط {{ comment.author }} در تاریخ {{ comment.datetime }}
+    </h7>
+    <p>
+        {{ comment.text }}
+    </p><hr>
+    {% endfor %}
+    </div>
 {% endblock %}

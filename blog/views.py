@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 
 from blog.forms import PostModelForm
-from blog.models import Post
+from blog.models import *
 from django.views import generic
 
 
@@ -42,11 +42,12 @@ def new_post(request):
     return render(request, 'blog/newpost.html', {'form_post' : form_post})
 
 
-# def post_detail(request, post_id):
-#     post = get_object_or_404(Post, pk=post_id)
-#     context = {'post' : post}
-#     return render(request, 'blog/post_detail.html', context=context)
+def post_detail(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    comments = Comment.objects.filter(post=post)
+    context = {'post' : post, 'comments' : comments}
+    return render(request, 'blog/post_detail.html', context=context)
 
-class PostDetailView(generic.DetailView):
-    model = Post
-    template_name = 'blog/post_detail.html'
+# class PostDetailView(generic.DetailView):
+#     model = Post
+#     template_name = 'blog/post_detail.html'
