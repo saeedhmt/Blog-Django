@@ -16,18 +16,23 @@ from .models import *
 
 class PostInline(admin.StackedInline):
     model = Post
+    classes = ['collapse']
 
 
 class CommentInline(admin.StackedInline):
     model = Comment
+    classes = ['collapse']
 
 
 class LikeInline(admin.TabularInline):
     model = Like
+    classes = ['collapse']
 
 
 class TagPostInline(admin.TabularInline):
     model = Post.tag.through
+    classes = ['collapse']
+
 
 
 
@@ -36,14 +41,12 @@ class CustomUserAdmin(admin.ModelAdmin):
     # fieldsets = [
     #     ('Info', {'fields' : ['image', 'first_name', 'last_name']})
     # ]
-    fields = ('image_tag', 'image', 'username', 'first_name', 'last_name', 'email', 'phone')
+    fields = ('image_tag', 'image', 'username', 'first_name', 'last_name', 'email', 'phone', 'groups', 'user_permissions')
     inlines = (PostInline, CommentInline, LikeInline)
     list_display = ('username', 'first_name', 'last_name', 'email')
     search_fields = ('first_name', 'last_name', 'username')
     readonly_fields = ('image_tag',)
 
-    # def image_tag(self, obj):
-    #     return format_html('<img src="{}" />'.format(obj.image))
 
 
 @admin.register(Post)
