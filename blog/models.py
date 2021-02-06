@@ -14,7 +14,7 @@ from .validators import check_phone
 class CustomUser(AbstractUser):
     # user = models.OneToOneField(User, on_delete=models.CASCADE)
     email = models.EmailField('آدرس ایمیل', null=False, blank=False, unique=True)
-    image = models.ImageField(upload_to=f'userImages/%Y/%m/%d/', null=True, blank=True)
+    image = models.ImageField('انتهاب عکس', upload_to=f'userImages/%Y/%m/%d/', null=True, blank=True)
     phone = models.CharField('شماره موبایل', max_length=11, validators=[check_phone], unique=True)
     datetime = models.DateTimeField('زمان و تاریخ ثبت نام کاربر', null=True, blank=True)
 
@@ -28,6 +28,8 @@ class CustomUser(AbstractUser):
     def image_tag(self):
         if self.image:
             return format_html('<img src="/media/%s" width="150" height="150" />' % (self.image))
+
+    image_tag.short_description = 'عکس'
 
 
 
