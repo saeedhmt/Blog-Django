@@ -51,6 +51,7 @@ class Tag(models.Model):
 
 class Category(models.Model):
     name = models.CharField('دسته بندی', max_length=20)
+    main_cat = models.ForeignKey('Category', null=True, blank=True, on_delete=models.CASCADE)
 
     def get_count_posts(self):
         return self.post_set.count()
