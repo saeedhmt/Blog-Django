@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    ویرایش نظر
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-5">
+    <form class="col-5 my-5" action="{% url 'blog:comment_edit' comment.id %}" method="post">
+    {% csrf_token %}
+        <table>
+        {{ form_comment.as_table }}
+        </table>
+        <input type="submit" value="ارسال">
+    </form>
+</div>
+{% endblock %}

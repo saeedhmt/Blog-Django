@@ -1,4 +1,5 @@
 from django.contrib import admin, messages
+from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
 from django.utils.translation import ngettext
 
@@ -36,18 +37,25 @@ class TagPostInline(admin.TabularInline):
 
 
 
-@admin.register(CustomUser)
-class CustomUserAdmin(admin.ModelAdmin):
+# @admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
     # fieldsets = [
     #     ('Info', {'fields' : ['image', 'first_name', 'last_name']})
     # ]
-    fields = ('image_tag', 'image', 'username', 'first_name', 'last_name', 'email', 'phone', 'groups', 'user_permissions')
+    fieldsets = (
+      ('اطلاعات کاربری', {'fields': ('username', 'email', 'password')}),
+      ('اطلاعات شخصی', {'fields': ('image', 'image_tag', 'first_name',
+                                    'last_name', 'phone', 'datetime')}),
+      ('اجازه های کاربر', {'fields': ('is_active', 'is_staff', 'is_superuser',
+                                     'groups', 'user_permissions')}),
+  )
+
     inlines = (PostInline, CommentInline, LikeInline)
     list_display = ('username', 'first_name', 'last_name', 'email')
     search_fields = ('first_name', 'last_name', 'username')
     readonly_fields = ('image_tag',)
 
-
+admin.site.register(CustomUser, CustomUserAdmin)
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):

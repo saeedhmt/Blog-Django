@@ -140,4 +140,4 @@ LOGGING = {
 }
 
 AUTH_USER_MODEL = 'blog.CustomUser'
-LOGIN_REDIRECT_URL = 'blog/'
+# LOGIN_REDIRECT_URL = 'blog/'

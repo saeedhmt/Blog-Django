@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
 from django.urls import reverse
 
-from blog.forms import PostModelForm
+from blog.forms import PostModelForm, CommentModelForm
 from blog.models import *
 from django.views import generic
 
@@ -32,7 +32,7 @@ def new_post(request):
             post = form_post.save(commit=False)
             post.author = request.user
             post.save()
-            form_post._save_m2m()
+            form_post.save_m2m()
 
             return HttpResponseRedirect(reverse('blog:index'))
 
@@ -51,3 +51,40 @@ def post_detail(request, post_id):
 # class PostDetailView(generic.DetailView):
 #     model = Post
 #     template_name = 'blog/post_detail.html'
+
+
+@permission_required('blog.change_post')
+def post_edit(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    if request.method == 'POST':
+        form_post = PostModelForm(request.POST, instance=post)
+
+        if form_post.is_valid():
+            edited_post = form_post.save(commit=False)
+            edited_post.author = request.user
+            edited_post.save()
+            form_post.save_m2m()
+
+            return HttpResponseRedirect(reverse('profile'))
+
+    else:
+        form_post = PostModelForm(instance=post)
+    return render(request, 'blog/post_edit.html',
+                  {'form_post' : form_post, 'post' : post})
+
+
+def comment_edit(request, comment_id):
+    comment = get_object_or_404(Comment, pk=comment_id)
+    if request.method == 'POST':
+        form_comment = CommentModelForm(request.POST, instance=comment)
+        if form_comment.is_valid():
+            edited_comment = form_comment.save(commit=False)
+            edited_comment.author = request.user
+            edited_comment.save()
+
+            return HttpResponseRedirect(reverse('profile'))
+
+    else:
+        form_comment = CommentModelForm(instance=comment)
+    return render(request, 'blog/comment_edit.html',
+                  {'form_comment' : form_comment, 'comment' : comment})

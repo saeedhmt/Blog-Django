@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    حساب کاربری
+{% endblock %}
+
+{% block content %}
+    <h3>
+    پست های شما
+    </h3>
+            <table class="table table-white table-hover text-center my-5">
+            <tbody>
+                {% for post in posts %}
+                <tr>
+{#                    <td>#}
+{#                        <img src="/media/{{ post.image }}" style="width: 100px; height: 100px">#}
+{#                    </td>#}
+                    <td>
+                        <a class="nav-link" href="{% url 'blog:post_detail' post.id %}">
+                        {{ post.title }}
+                        </a>
+                    </td>
+                    <td>
+                        دسته بندی : {{ post.category }}
+                    </td>
+{#                    <td>#}
+{#                        نوشته شده توسط : {{ post.author }}#}
+{#                    </td>#}
+                    <td>
+                        تاریخ انتشار : {{ post.datetime }}
+                    </td>
+                    <td>
+                        تعداد لایک : {{ post.get_count_likes }}
+                    </td>
+                    <td>
+                        تعداد دیسلایک : {{ post.get_count_dislikes }}
+                    </td>
+                    <td>
+                        برچسب : {{ post.get_tags }}
+                    </td>
+                    <td>
+                    <a class="nav-link" href="{% url 'blog:post_edit' post.id %}">
+                        ویرایش
+                    </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    <h3>
+    نظرات شما
+    </h3>
+    <table class="table table-white table-hover text-center my-5">
+            <tbody>
+                {% for comment in comments %}
+                <tr>
+                    <td>
+                        <a class="nav-link" href="{% url 'blog:post_detail' comment.post.id %}">
+                        {{ comment.text|truncatechars:20 }}
+                        </a>
+                    </td>
+                    <td>
+                        پست : {{ comment.post.title }}
+                    </td>
+                    <td>
+                        تاریخ انتشار : {{ comment.datetime }}
+                    </td>
+                    <td>
+                        تعداد لایک : {{ comment.get_count_likes }}
+                    </td>
+                    <td>
+                        تعداد دیسلایک : {{ comment.get_count_dislikes }}
+                    </td>
+                    <td>
+                    <a class="nav-link" href="{% url 'blog:comment_edit' comment.id %}">
+                        ویرایش
+                    </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+{% endblock %}
