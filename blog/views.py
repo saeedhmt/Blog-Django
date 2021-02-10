@@ -22,6 +22,19 @@ class IndexListView(generic.ListView):
     def get_queryset(self):
         return Post.objects.filter(active=True).filter(show=True).order_by('-datetime')[:5]
 
+
+def categoty(request):
+    categories = Category.objects.all()
+    context = {'categories' : categories}
+    return render(request, 'blog/categories.html', context=context)
+
+
+def category_posts(request, category_id):
+    category = get_object_or_404(Category, pk=category_id)
+    posts = Post.objects.filter(category=category)
+    context = {'posts' : posts, 'category' : category}
+    return render(request, 'blog/category_posts.html', context=context)
+
 # @login_required
 @permission_required('blog.add_post')
 def new_post(request):
@@ -88,3 +101,4 @@ def comment_edit(request, comment_id):
         form_comment = CommentModelForm(instance=comment)
     return render(request, 'blog/comment_edit.html',
                   {'form_comment' : form_comment, 'comment' : comment})
+

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    دسته بندی ها
+{% endblock %}
+
+{% block content %}
+    {% for category in categories %}
+            <table class="table table-white table-hover text-center my-5">
+            <tbody>
+                <tr>
+                    <td>
+                        <a class="nav-link" href="{% url 'blog:category_posts' category.id %}">
+                        {{ category.name }}
+                        </a>
+                    </td>
+                    <td>
+                        تعداد پست ها : {{ category.get_count_posts }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+{% endblock %}
