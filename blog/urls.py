@@ -10,6 +10,6 @@ urlpatterns = [
     # path('post_detail/<int:pk>/', views.PostDetailView.as_view(), name='post_detail'),
     path('post_edit/<int:post_id>/', views.post_edit, name='post_edit'),
     path('comment_edit/<int:comment_id>/', views.comment_edit, name='comment_edit'),
-    path('categories/', views.categoty, name='categories'),
+    path('categories/', views.categoties, name='categories'),
     path('category_posts/<int:category_id>/', views.category_posts, name='category_posts'),
 ]

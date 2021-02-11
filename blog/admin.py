@@ -140,7 +140,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    fields = ('name',)
+    fields = ('name', 'main_cat')
     inlines = (PostInline,)
     list_display = ('name', 'get_count_posts')
     search_fields = ('name',)

@@ -23,9 +23,10 @@ class IndexListView(generic.ListView):
         return Post.objects.filter(active=True).filter(show=True).order_by('-datetime')[:5]
 
 
-def categoty(request):
-    categories = Category.objects.all()
-    context = {'categories' : categories}
+def categoties(request):
+    main_cats = Category.objects.filter(main_cat=None)
+    sub_cats = Category.objects.exclude(main_cat=None)
+    context = {'main_cats' : main_cats, 'sub_cats' : sub_cats}
     return render(request, 'blog/categories.html', context=context)
 
 
