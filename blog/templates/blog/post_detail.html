@@ -7,7 +7,10 @@
 {% block content %}
     <div class="row my-5">
     <h7 class="'my-4">
-        دسته بندی: {{ post.category }}
+        دسته بندی:
+        <a class="nav-link" href="{% url 'blog:category_posts' post.category.id %}" style="display: inline-block">
+            {{ post.category }}
+        </a>
     </h7>
     <h2 class="my-2">
         {{ post.title }}
@@ -22,7 +25,12 @@
         {{ post.text }}
     </p><br><br><br>
     <h7>
-        برپسب ها : {{ post.get_tags }}
+        برپسب ها :
+        {% for tag in post.tag.all %}
+            <a class="nav-link" href="{% url 'blog:tag_posts' tag.id %}" style="display: inline-block">
+                {{ tag.name }}
+            </a>
+        {% endfor %}
     </h7>
     </div>
     <div class="row my-5">

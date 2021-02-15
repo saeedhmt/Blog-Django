@@ -18,7 +18,7 @@
                         </a>
                     </td>
                     <td>
-                        دسته بندی : <a class="nav-link" href="{% url 'blog:category_posts' post.category.id %}">
+                        دسته بندی : <a class="nav-link" href="{% url 'blog:category_posts' post.category.id %}" style="display: inline-block">
                             {{ post.category }}
                             </a>
                     </td>
@@ -35,7 +35,12 @@
                         تعداد دیسلایک : {{ post.get_count_dislikes }}
                     </td>
                     <td>
-                        برچسب : {{ post.get_tags }}
+                        برچسب :
+                        {% for tag in post.tag.all %}
+                            <a class="nav-link" href="{% url 'blog:tag_posts' tag.id %}" style="display: inline-block">
+                            {{ tag.name }}
+                            </a>
+                        {% endfor %}
                     </td>
                 </tr>
             </tbody>

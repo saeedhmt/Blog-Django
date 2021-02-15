@@ -19,7 +19,7 @@
                     </td>
                     <td>
                         دسته بندی:
-                        <a class="nav-link" href="{% url 'blog:category_posts' post.category.id %}">
+                        <a class="nav-link" href="{% url 'blog:category_posts' post.category.id %}" style="display: inline-block">
                             {{ post.category }}
                             </a>
                     </td>
@@ -38,7 +38,7 @@
                     <td>
                         برچسب :
                         {% for tag in post.tag.all %}
-                            <a class="nav-link" href="{% url 'blog:tag_posts' tag.id %}">
+                            <a class="nav-link" href="{% url 'blog:tag_posts' tag.id %}" style="display: inline-block">
                             {{ tag.name }}
                             </a>
                         {% endfor %}
