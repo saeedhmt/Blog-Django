@@ -12,4 +12,5 @@ urlpatterns = [
     path('comment_edit/<int:comment_id>/', views.comment_edit, name='comment_edit'),
     path('categories/', views.categoties, name='categories'),
     path('category_posts/<int:category_id>/', views.category_posts, name='category_posts'),
+    path('tag_posts/<int:tag_id>/', views.tag_posts, name='tag_posts'),
 ]

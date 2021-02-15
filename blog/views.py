@@ -26,7 +26,8 @@ class IndexListView(generic.ListView):
 def categoties(request):
     main_cats = Category.objects.filter(main_cat=None)
     sub_cats = Category.objects.exclude(main_cat=None)
-    context = {'main_cats' : main_cats, 'sub_cats' : sub_cats}
+    categorys = Category.objects.all()
+    context = {'main_cats' : main_cats, 'sub_cats' : sub_cats, 'categories' : categorys}
     return render(request, 'blog/categories.html', context=context)
 
 
@@ -103,3 +104,10 @@ def comment_edit(request, comment_id):
     return render(request, 'blog/comment_edit.html',
                   {'form_comment' : form_comment, 'comment' : comment})
 
+
+def tag_posts(requests, tag_id):
+    tag = get_object_or_404(Tag, pk=tag_id)
+    posts = Post.objects.filter(tag=tag)
+    context = {'posts': posts, 'tag':tag}
+
+    return render(requests, 'blog/tag_posts.html', context=context)

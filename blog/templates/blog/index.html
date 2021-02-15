@@ -18,7 +18,10 @@
                         </a>
                     </td>
                     <td>
-                        دسته بندی : {{ post.category }}
+                        دسته بندی:
+                        <a class="nav-link" href="{% url 'blog:category_posts' post.category.id %}">
+                            {{ post.category }}
+                            </a>
                     </td>
                     <td>
                         نوشته شده توسط : {{ post.author }}
@@ -33,7 +36,12 @@
                         تعداد دیسلایک : {{ post.get_count_dislikes }}
                     </td>
                     <td>
-                        برچسب : {{ post.get_tags }}
+                        برچسب :
+                        {% for tag in post.tag.all %}
+                            <a class="nav-link" href="{% url 'blog:tag_posts' tag.id %}">
+                            {{ tag.name }}
+                            </a>
+                        {% endfor %}
                     </td>
                 </tr>
             </tbody>

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+
 {% block title %}
     دسته بندی ها
 {% endblock %}
@@ -21,6 +22,7 @@
 {#            </tbody>#}
 {#        </table>#}
 {#    {% endfor %}#}
+    <!-- ------------------------------- -->
     <ul>
     {% for main_cat in main_cats %}
         <li>
@@ -35,6 +37,14 @@
                     {{ sub_cat.name }}
                     </a>
                     </li>
+                {% elif sub_cat.main_cat in sub_cats and sub_cat.main_cat.main_cat == main_cat %}
+                    <ul>
+                    <li>
+                        <a class="nav-link" href="{% url 'blog:category_posts' sub_cat.id %}">
+                            {{ sub_cat.name }}
+                        </a>
+                    </li>
+                    </ul>
                 {% endif %}
             {% endfor %}
         </ul>

@@ -59,10 +59,19 @@
                         </li>
                     </ul>
                 </div>
+                <div class="user">
+                    {% if user.is_authenticated %}
+                        {{ user }}
+                        <button type="button" class="btn btn-outline-primary">
+                    <a href="{% url 'logout' %}">خروج</a>
+                </button>
+                    {% else %}
                 <button type="button" class="btn btn-outline-primary">
                     <a href="{% url 'login' %}">ورود</a>
                 </button>&nbsp;&nbsp;
                 <button type="button" class="btn btn-outline-primary">ثبت نام</button>
+                    {% endif %}
+                </div>
             </div>
         </nav>
     </header>
