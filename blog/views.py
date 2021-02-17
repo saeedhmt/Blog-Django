@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 # Create your views here.
 from django.urls import reverse
 
-from blog.forms import PostModelForm, CommentModelForm
+from blog.forms import PostModelForm, CommentModelForm, TagModelForm, TagModelFormset
 from blog.models import *
 from django.views import generic
 
@@ -42,8 +42,9 @@ def category_posts(request, category_id):
 def new_post(request):
     if request.method == 'POST':
         form_post = PostModelForm(request.POST)
+        form_tag = TagModelFormset(request.POST)
 
-        if form_post.is_valid():
+        if form_post.is_valid() and form_tag.is_valid():
             post = form_post.save(commit=False)
             post.author = request.user
             post.save()
@@ -53,14 +54,28 @@ def new_post(request):
 
     else:
         form_post = PostModelForm()
+        form_tag = TagModelFormset(queryset=Tag.objects.none())
 
-    return render(request, 'blog/newpost.html', {'form_post' : form_post})
+    return render(request, 'blog/newpost.html', {'form_post' : form_post, 'form_tag' : form_tag})
 
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    comments = Comment.objects.filter(post=post)
-    context = {'post' : post, 'comments' : comments}
+    comments = Comment.objects.filter(post=post).filter(show=True)
+
+    if request.method == 'POST':
+        form_comment = CommentModelForm(request.POST)
+        if form_comment.is_valid():
+            comment = form_comment.save(commit=False)
+            comment.author = request.user
+            comment.post = post
+            comment.save()
+            return HttpResponseRedirect(reverse('blog:post_detail', args=(post_id,)))
+
+    else:
+        form_comment = CommentModelForm()
+
+    context = {'post' : post, 'comments' : comments, 'form_comment' : form_comment}
     return render(request, 'blog/post_detail.html', context=context)
 
 # class PostDetailView(generic.DetailView):
