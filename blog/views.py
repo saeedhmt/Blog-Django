@@ -33,7 +33,7 @@ def categoties(request):
 
 def category_posts(request, category_id):
     category = get_object_or_404(Category, pk=category_id)
-    posts = Post.objects.filter(category=category)
+    posts = Post.objects.filter(category=category, show=True)
     context = {'posts' : posts, 'category' : category}
     return render(request, 'blog/category_posts.html', context=context)
 
@@ -48,7 +48,18 @@ def new_post(request):
             post = form_post.save(commit=False)
             post.author = request.user
             post.save()
-            form_post.save_m2m()
+            # form_post.save_m2m()
+            tags = Tag.objects.all().values_list('name', flat=True)
+            for tag in form_tag.cleaned_data:
+                if not tag['DELETE']:
+                    if not tag['name'] in tags:
+                        new_tag = Tag.objects.create(name=tag['name'])
+                        # print(new_tag)
+                        post.tag.add(new_tag)
+                    else:
+                        old_tag = Tag.objects.get(name=tag['name'])
+                        print(old_tag)
+                        post.tag.add(old_tag)
 
             return HttpResponseRedirect(reverse('blog:index'))
 
@@ -122,7 +133,7 @@ def comment_edit(request, comment_id):
 
 def tag_posts(requests, tag_id):
     tag = get_object_or_404(Tag, pk=tag_id)
-    posts = Post.objects.filter(tag=tag)
+    posts = Post.objects.filter(tag=tag, show=True)
     context = {'posts': posts, 'tag':tag}
 
     return render(requests, 'blog/tag_posts.html', context=context)
