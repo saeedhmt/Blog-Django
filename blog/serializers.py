@@ -15,6 +15,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Tag
         fields = ['id', 'name', 'get_count_posts']
@@ -26,35 +27,28 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'main_cat', 'get_count_posts']
 
 
-class PostSerializerDetail(serializers.ModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
+
     class Meta:
         model = Post
-        fields = ['id', 'title', 'text', 'image',
+        fields = ['id', 'title', 'text', 'image', 'author',
                   'show', 'datetime', 'active',
                   'get_count_likes', 'get_count_dislikes']
 
-class PostSerializerList(serializers.ModelSerializer):
-    class Meta:
-        model = Post
-        fields = ['id', 'title', 'image', 'show', 'datetime',
-                  'active', 'get_count_likes', 'get_count_dislikes']
 
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
 
-class CommentSerializerList(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['id', 'datetime', 'show',
-                  'get_count_likes', 'get_count_dislikes']
-
-
-class CommentSerializerDetail(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = ['id', 'text', 'datetime', 'show',
+        fields = ['id', 'text', 'datetime', 'show', 'author',
                   'get_count_likes', 'get_count_dislikes']
 
 
 class LikeSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+
     class Meta:
         model = Like
-        fields = ['id', 'is_like', 'datetime']
+        fields = ['id', 'user', 'is_like', 'datetime']
